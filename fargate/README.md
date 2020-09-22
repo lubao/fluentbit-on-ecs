@@ -11,15 +11,15 @@ Please reference our [official document](https://docs.aws.amazon.com/firehose/la
 ```
 [INPUT]
     Name tail
-    Path *_/_**_var_**_/_**_log_**_/_**_app_**_/_**_app_**_._**_log_*
-    Tag *_debug_**_-_**_app_**_-_**_log_*
-    DB *_/_**_tmp_**_/_**_fluent_**_-_**_bit_**_-_**_app_**_._**_db_*
+    Path $PATH_TO_DEBUG_LOG
+    Tag debug-log
+    DB $PATH_TO_DEBUG_LOG_FILE_DB
     
 [INPUT]
     Name tail
-    Path *_/_**_var_**_/_**_log_**_/_**_nginx_**_/_**_nginx_**_._**_log_*
-    Tag *_error_**_-_**_log_*
-    DB *_/_**_tmp_**_/_**_fluent_**_-_**_bit_**_-_**_nginx_**_._*db
+    Path $PATH_TO_DEBUG_LOG
+    Tag error-log
+    DB $PATH_TO_DEBUG_LOG_FILE_DB
 
 [FILTER]
     Name record_modifier
@@ -30,17 +30,17 @@ Please reference our [official document](https://docs.aws.amazon.com/firehose/la
     
 [OUTPUT]
     Name cloudwatch
-    Match *_error_**_-*_**_ _*
-    region *_ap_**_-_**_northeast_**_-_**_1_*
-    log_group_name *_/_**_ecs_**_/_**_galaxy_**_-_**_fluentbit_*
+    Match error-log
+    region $CLOUDWATCH_REGION
+    log_group_name $CLOUDWATCH_LOG_GROUP_NAME
     log_stream_prefix TASK_ID-
     auto_create_group true
 
 [OUTPUT]
     Name firehose
-    Match *_debug_**_-*_**_ _*
-    region *_ap_**_-_**_northeast_**_-_**_1_*
-    delivery_stream *_galaxy_**_-_**_debug_**_-_**_log_*
+    Match debug-log
+    region $FIREHOSE_REGION
+    delivery_stream $DELIVERY_STREAM
 ```
 
 ## Sample entrypoint.sh
